@@ -1,0 +1,46 @@
+<% provide(:headerTitle, "Shopping Items") %>
+<%=@suka%>
+<% if @review %>
+    <%=@review%>
+    
+<% end %>
+<div class="row">
+    <% @shoppingItems.each do |item| %>
+        <div class="col-12, col-sm-6 col-md-4 mb-4">
+            <div class="card h-100"> 
+                <div class="card-img">
+                    <img src="<%=item.imageUrl%>">
+                </div>
+                <div class="card-body">
+                    <div><%= item.name %></div>
+                    <div class="font-weight-bold">$<%=number_with_precision(item.price, :precision => 2) %></div>
+                </div>
+                <div class="card-footer">
+                    <% if logged_in? %>
+                        <% review = item.review.find_by(user_id: current_user.id) %>
+                        <% rates = [1, 2, 3, 4, 5]%>
+                        <div class="d-flex">
+                            <% rates.each do |rate| %>
+                                <%= form_tag "/rate" do |form| %>
+                                    <%= hidden_field_tag(:rate, rate) %>
+                                    <%= hidden_field_tag(:pageNumber, @pageNumber) %>
+                                    <%= hidden_field_tag(:shopping_item_id, item.id) %>
+                                    <button class="border-0 p-0 m-0 bg-transparent" type="submit">
+                                        <small class="text-muted">
+                                            <% if review && (review.rating >= rate) %>
+                                                ★
+                                            <% else %>
+                                                ☆  
+                                            <% end %>           
+                                        </small>
+                                    </button>
+                                <% end %>
+                            <% end %>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    <% end %>
+</div>
+<%= render partial: 'shared/pagination', locals: { limit: 10, count: @shoppingItemsCount, pageNumber: @pageNumber } %>

@@ -1,0 +1,40 @@
+<%
+previousPageNumber = pageNumber - 1
+nextPageNumber = pageNumber + 1
+totalPages = (count / limit).ceil
+displayedPagesCount = 5
+if totalPages > 1
+  if pageNumber < displayedPagesCount
+    startPageNumber = 1
+    if totalPages < displayedPagesCount
+      endPageNumber = totalPages
+    else 
+      endPageNumber = displayedPagesCount
+    end
+  elsif pageNumber > totalPages - displayedPagesCount
+    startPageNumber = totalPages - displayedPagesCount + 1
+    endPageNumber = totalPages
+  else
+    startPageNumber = pageNumber - 2
+    endPageNumber = pageNumber + 2
+  end
+end
+%>
+<% previousItemClass = pageNumber == 1 ? "page-item disabled" : "page-item" %>
+<% nextItemClass = pageNumber == totalPages - 1 ? "page-item disabled" : "page-item" %>
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="<%= previousItemClass %>">
+            <a class="page-link" href="?pageNumber=<%=previousPageNumber%>">Previous</a>
+        </li>
+        <% (startPageNumber...endPageNumber).each do |page| %>
+            <% liClass = page == pageNumber ? "page-item active" : "page-item" %>
+            <li class="<%= liClass %>">
+                <a class="page-link" href="?pageNumber=<%=page%>"><%= page %></a>
+            </li>
+        <% end %>
+        <li class="<%= nextItemClass %>">
+            <a class="page-link" href="?pageNumber=<%=nextPageNumber%>">Next</a>
+        </li>
+    </ul>
+</div>
